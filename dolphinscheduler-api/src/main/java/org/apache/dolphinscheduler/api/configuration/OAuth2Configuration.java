@@ -49,6 +49,8 @@ public class OAuth2Configuration {
         private String callbackUrl;
         private String iconUri;
         private String provider;
+        private String userNameAttributeName;
+        private String emailAttributeName;
 
     }
 }

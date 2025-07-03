@@ -247,10 +247,22 @@ public class LoginController extends BaseController {
                     Constants.HTTP_CONNECT_TIMEOUT,
                     Constants.HTTP_CONNECT_TIMEOUT,
                     Constants.HTTP_CONNECT_TIMEOUT).getBody();
-            String username = JSONUtils.getNodeString(userInfoJsonStr, "login");
+            String usernameNodeName = oAuth2ClientProperties.getUserNameAttributeName();
+            if (StringUtils.isBlank(usernameNodeName)) {
+                usernameNodeName = "login";
+            }
+            String username = JSONUtils.getNodeString(userInfoJsonStr, usernameNodeName);
             User user = usersService.getUserByUserName(username);
             if (user == null) {
-                user = usersService.createUser(UserType.GENERAL_USER, username, null);
+                String emailNodeName = oAuth2ClientProperties.getEmailAttributeName();
+                if (StringUtils.isBlank(usernameNodeName)) {
+                    emailNodeName = "email";
+                }
+                String email = JSONUtils.getNodeString(userInfoJsonStr, emailNodeName);
+                if (StringUtils.isBlank(email)) {
+                    email = null;
+                }
+                user = usersService.createUser(UserType.GENERAL_USER, username, email);
             }
             Session session = sessionService.createSessionIfAbsent(user);
             response.setStatus(HttpStatus.SC_MOVED_TEMPORARILY);
